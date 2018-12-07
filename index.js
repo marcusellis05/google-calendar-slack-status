@@ -45,7 +45,11 @@ app.post('/', (req, res, next) => {
     status = status.replace(dndToken, '');
   }
 
-	console.log('end:', end.format(), end.unix(), end.utc());
+	const now = moment();
+	const expires = end.valueOf()
+	console.log('now:', now.format(), now.unix(), now.valueOf());
+	console.log('start:', start.format(), start.unix(), start.valueOf());
+	console.log('end:', end.format(), end.unix(), end.valueOf());
 
   // set status
   slack.users.profile.set({
@@ -53,7 +57,7 @@ app.post('/', (req, res, next) => {
     profile: JSON.stringify({
       "status_text": `${status} from ${start.format('h:mm')} to ${end.format('h:mm a')} ${process.env.TIME_ZONE}`,
       "status_emoji": ":calendar:",
-      "status_expiration": end.utc()
+      "status_expiration": expires
     })
   });
 	res.status(200);
