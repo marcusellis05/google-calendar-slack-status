@@ -16,7 +16,10 @@ const router = express.Router();
 app.post('/', (req, res, next) => {
 	console.log(req.body);
   // check for secret token
-  if (!req.body.token || req.body.token !== process.env.SECRET_TOKEN) next();
+  if (!req.body.token || req.body.token !== process.env.SECRET_TOKEN) {
+		return next();
+	}
+
   // grab status and clean it up
   let status = req.body.title;
   const dndToken = ' [DND]';
@@ -26,9 +29,7 @@ app.post('/', (req, res, next) => {
   const end = moment(req.body.end, dateFormat);
 
 	if (!status) {
-		res.status(200);
-	  res.send('👎');
-		return;
+		return next();
 	}
 
   // check for DND
