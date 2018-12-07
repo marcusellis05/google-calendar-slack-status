@@ -44,6 +44,9 @@ app.post('/', (req, res, next) => {
     });
     status = status.replace(dndToken, '');
   }
+
+	console.log('end:', end.format(), end.unix(), end.utc());
+
   // set status
   slack.users.profile.set({
     token: process.env.SLACK_TOKEN,
