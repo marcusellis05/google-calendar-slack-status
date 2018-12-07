@@ -22,6 +22,28 @@ app.post('/', (req, res, next) => {
 		return;
 	}
 
+	let clearStatus = req.body.clear || false;
+
+	if (clearStatus) {
+		slack.users.profile
+			.set({
+		    token: process.env.SLACK_TOKEN,
+		    profile: JSON.stringify({
+		      "status_text": "",
+		      "status_emoji": "",
+		    })
+		  })
+			.then(() => {
+				res.status(200);
+			  res.send('👍');
+			})
+			.catch((err) => {
+				res.status(500);
+			  res.send(err);
+			});
+		return;
+	}
+
   // grab status and clean it up
   let status = req.body.title;
   const dndToken = ' [DND]';
@@ -45,12 +67,6 @@ app.post('/', (req, res, next) => {
     status = status.replace(dndToken, '');
   }
 
-	const now = moment();
-	const expires = end.unix();
-	console.log('  now:', now.format(), now.unix(), now.valueOf());
-	console.log('start:', start.format(), start.unix(), start.valueOf());
-	console.log('  end:', end.format(), end.unix(), end.valueOf());
-
   // set status
   slack.users.profile
 		.set({
@@ -58,16 +74,13 @@ app.post('/', (req, res, next) => {
 	    profile: JSON.stringify({
 	      "status_text": `${status} from ${start.format('h:mm')} to ${end.format('h:mm a')} ${process.env.TIME_ZONE}`,
 	      "status_emoji": ":calendar:",
-	      "status_expiration": expires
 	    })
 	  })
-		.then((resp) => {
-			console.log(resp);
+		.then(() => {
 			res.status(200);
 		  res.send('🤘');
 		})
 		.catch((err) => {
-			console.log(err);
 			res.status(500);
 		  res.send(err);
 		});
@@ -91,13 +104,19 @@ app.get('/', (req, res, next) => {
       </head>
       <body>
         <h1>Your Heroku server is running!</h1>
-        <p>You'll need the following information for your IFTTT recipe:</p>
+				<p>You'll need the following information for your "start" IFTTT recipe:</p>
         <h3>Body</h3>
 <pre>{
   "title":"<<<{{Title}}>>>",
   "start":"{{Starts}}",
   "end":"{{Ends}}",
   "token": "${process.env.SECRET_TOKEN}"
+}</pre>
+<p>You'll need the following information for your "end" IFTTT recipe:</p>
+<h3>Body</h3>
+<pre>{
+	"clear":true,
+	"token": "${process.env.SECRET_TOKEN}"
 }</pre>
       </body>
     </html>
