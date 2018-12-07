@@ -14,35 +14,34 @@ app.use(bodyParser.json());
 const router = express.Router();
 
 app.post('/', (req, res, next) => {
-	console.log(req.body);
   // check for secret token
   if (!req.body.token || req.body.token !== process.env.SECRET_TOKEN) {
-		res.status(401);
-	  res.send('Unauthenticated - missing token');
-		return;
-	}
+    res.status(401);
+    res.send('Unauthenticated: missing token');
+    return;
+  }
 
-	let clearStatus = req.body.clear || false;
+  let clearStatus = req.body.clear || false;
 
-	if (clearStatus) {
-		slack.users.profile
-			.set({
-		    token: process.env.SLACK_TOKEN,
-		    profile: JSON.stringify({
-		      "status_text": "",
-		      "status_emoji": "",
-		    })
-		  })
-			.then(() => {
-				res.status(200);
-			  res.send('👍');
-			})
-			.catch((err) => {
-				res.status(500);
-			  res.send(err);
-			});
-		return;
-	}
+  if (clearStatus) {
+    slack.users.profile
+      .set({
+        token: process.env.SLACK_TOKEN,
+        profile: JSON.stringify({
+          "status_text": "",
+          "status_emoji": "",
+        })
+      })
+      .then(() => {
+        res.status(200);
+        res.send('👍');
+      })
+      .catch((err) => {
+        res.status(500);
+        res.send('Slack API error:', err);
+      });
+    return;
+  }
 
   // grab status and clean it up
   let status = req.body.title;
@@ -52,11 +51,11 @@ app.post('/', (req, res, next) => {
   const start = moment(req.body.start, dateFormat);
   const end = moment(req.body.end, dateFormat);
 
-	if (!status) {
-		res.status(400);
-	  res.send('Bad request - missing required value for "status"');
-		return;
-	}
+  if (!status) {
+    res.status(400);
+    res.send('Bad request - missing required value for "status"');
+    return;
+  }
 
   // check for DND
   if (status.includes(dndToken)) {
@@ -69,21 +68,21 @@ app.post('/', (req, res, next) => {
 
   // set status
   slack.users.profile
-		.set({
-	    token: process.env.SLACK_TOKEN,
-	    profile: JSON.stringify({
-	      "status_text": `${status} from ${start.format('h:mm')} to ${end.format('h:mm a')} ${process.env.TIME_ZONE}`,
-	      "status_emoji": ":calendar:",
-	    })
-	  })
-		.then(() => {
-			res.status(200);
-		  res.send('🤘');
-		})
-		.catch((err) => {
-			res.status(500);
-		  res.send(err);
-		});
+    .set({
+      token: process.env.SLACK_TOKEN,
+      profile: JSON.stringify({
+        "status_text": `${status} from ${start.format('h:mm')} to ${end.format('h:mm a')} ${process.env.TIME_ZONE}`,
+        "status_emoji": ":calendar:",
+      })
+    })
+    .then(() => {
+      res.status(200);
+      res.send('🤘');
+    })
+    .catch((err) => {
+      res.status(500);
+      res.send('Slack API error:', err);
+    });
 });
 
 app.get('/', (req, res, next) => {
@@ -104,19 +103,19 @@ app.get('/', (req, res, next) => {
       </head>
       <body>
         <h1>Your Heroku server is running!</h1>
-				<p>You'll need the following information for your "start" IFTTT recipe:</p>
+        <p>You'll need the following information for your "start" IFTTT recipe:</p>
         <h3>Body</h3>
 <pre>{
   "title":"<<<{{Title}}>>>",
   "start":"{{Starts}}",
   "end":"{{Ends}}",
-  "token": "${process.env.SECRET_TOKEN}"
+  "token": "<TOP_SECRET_TOKEN>"
 }</pre>
 <p>You'll need the following information for your "end" IFTTT recipe:</p>
 <h3>Body</h3>
 <pre>{
-	"clear":true,
-	"token": "${process.env.SECRET_TOKEN}"
+  "clear":true,
+  "token": "<TOP_SECRET_TOKEN>"
 }</pre>
       </body>
     </html>
