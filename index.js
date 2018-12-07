@@ -61,7 +61,8 @@ app.post('/', (req, res, next) => {
 	      "status_expiration": expires
 	    })
 	  })
-		.then(() => {
+		.then((resp) => {
+			console.log(resp);
 			res.status(200);
 		  res.send('🤘');
 		})
