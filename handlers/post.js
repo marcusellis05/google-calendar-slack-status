@@ -1,4 +1,4 @@
-const slack = require('./slack');
+const slack = require('../lib/slack');
 const moment = require('moment');
 
 module.exports = (req, res, next) => {
