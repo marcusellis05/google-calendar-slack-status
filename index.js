@@ -17,7 +17,9 @@ app.post('/', (req, res, next) => {
 	console.log(req.body);
   // check for secret token
   if (!req.body.token || req.body.token !== process.env.SECRET_TOKEN) {
-		return next();
+		res.status(401);
+	  res.send('Unauthenticated - missing token');
+		return;
 	}
 
   // grab status and clean it up
@@ -29,7 +31,9 @@ app.post('/', (req, res, next) => {
   const end = moment(req.body.end, dateFormat);
 
 	if (!status) {
-		return next();
+		res.status(400);
+	  res.send('Bad request - missing required value for "status"');
+		return;
 	}
 
   // check for DND
