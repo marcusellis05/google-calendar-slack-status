@@ -46,22 +46,29 @@ app.post('/', (req, res, next) => {
   }
 
 	const now = moment();
-	const expires = end.valueOf()
-	console.log('now:', now.format(), now.unix(), now.valueOf());
+	const expires = end.unix();
+	console.log('  now:', now.format(), now.unix(), now.valueOf());
 	console.log('start:', start.format(), start.unix(), start.valueOf());
-	console.log('end:', end.format(), end.unix(), end.valueOf());
+	console.log('  end:', end.format(), end.unix(), end.valueOf());
 
   // set status
-  slack.users.profile.set({
-    token: process.env.SLACK_TOKEN,
-    profile: JSON.stringify({
-      "status_text": `${status} from ${start.format('h:mm')} to ${end.format('h:mm a')} ${process.env.TIME_ZONE}`,
-      "status_emoji": ":calendar:",
-      "status_expiration": expires
-    })
-  });
-	res.status(200);
-  res.send('🤘');
+  slack.users.profile
+		.set({
+	    token: process.env.SLACK_TOKEN,
+	    profile: JSON.stringify({
+	      "status_text": `${status} from ${start.format('h:mm')} to ${end.format('h:mm a')} ${process.env.TIME_ZONE}`,
+	      "status_emoji": ":calendar:",
+	      "status_expiration": expires
+	    })
+	  })
+		.then(() => {
+			res.status(200);
+		  res.send('🤘');
+		})
+		.catch((err) => {
+			res.status(500);
+		  res.send(err);
+		});
 });
 
 app.get('/', (req, res, next) => {
