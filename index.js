@@ -66,6 +66,7 @@ app.post('/', (req, res, next) => {
 		  res.send('🤘');
 		})
 		.catch((err) => {
+			console.log(err);
 			res.status(500);
 		  res.send(err);
 		});
