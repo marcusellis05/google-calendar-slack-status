@@ -12,10 +12,7 @@ module.exports = (req, res, next) => {
   let clearStatus = req.body.clear || false;
 
   if (clearStatus) {
-		slack.status({
-			status: '',
-			emoji: ''
-		})
+		slack.status({})
 		.then(() => {
 			res.status(200);
 			res.send('👍');
