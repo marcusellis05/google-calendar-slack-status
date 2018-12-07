@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 const router = express.Router();
 
 app.post('/', (req, res, next) => {
+	console.log(req.body);
   // check for secret token
   if (!req.body.token || req.body.token !== process.env.SECRET_TOKEN) next();
   // grab status and clean it up
