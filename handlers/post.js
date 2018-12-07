@@ -12,15 +12,15 @@ module.exports = (req, res, next) => {
   let clearStatus = req.body.clear || false;
 
   if (clearStatus) {
-		slack.status({})
-		.then(() => {
-			res.status(200);
-			res.send('👍');
-		})
-		.catch((err) => {
-			res.status(500);
-			res.send(`Slack API error: ${err}`);
-		});
+    slack.status({})
+    .then(() => {
+      res.status(200);
+      res.send('👍');
+    })
+    .catch((err) => {
+      res.status(500);
+      res.send(`Slack API error: ${err}`);
+    });
     return;
   }
 
@@ -32,7 +32,7 @@ module.exports = (req, res, next) => {
   const dateFormat = 'MMM D, YYYY [at] hh:mmA';
   const start = moment(req.body.start, dateFormat);
   const end = moment(req.body.end, dateFormat);
-	const duration = end.diff(start, 'minutes');
+  const duration = end.diff(start, 'minutes');
 
   if (!status) {
     res.status(400);
@@ -42,7 +42,7 @@ module.exports = (req, res, next) => {
 
   // check for DND
   if (status.includes(dndToken)) {
-		slack.dnd(duration);
+    slack.dnd(duration);
     status = status.replace(dndToken, '');
   }
 
@@ -51,12 +51,12 @@ module.exports = (req, res, next) => {
     text: `${status} from ${start.format('h:mm')} to ${end.format('h:mm a')} ${process.env.TIME_ZONE}`,
     emoji: ":calendar:"
   })
-	.then(() => {
-		res.status(200);
-		res.send('👍');
-	})
-	.catch((err) => {
-		res.status(500);
-		res.send(`Slack API error: ${err}`);
-	});
+  .then(() => {
+    res.status(200);
+    res.send('👍');
+  })
+  .catch((err) => {
+    res.status(500);
+    res.send(`Slack API error: ${err}`);
+  });
 };

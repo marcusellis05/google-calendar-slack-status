@@ -2,6 +2,6 @@ const post = require('./post');
 const get = require('./get');
 
 module.exports = {
-	post: post,
-	get: get
+  post: post,
+  get: get
 };
