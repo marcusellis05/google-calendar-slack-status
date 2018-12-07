@@ -22,7 +22,7 @@ module.exports = (req, res, next) => {
 		})
 		.catch((err) => {
 			res.status(500);
-			res.send('Slack API error:', err);
+			res.send(`Slack API error: ${err}`);
 		});
     return;
   }
@@ -60,6 +60,6 @@ module.exports = (req, res, next) => {
 	})
 	.catch((err) => {
 		res.status(500);
-		res.send('Slack API error:', err);
+		res.send(`Slack API error: ${err}`);
 	});
 };
