@@ -22,9 +22,20 @@ module.exports = (req, res, next) => {
 
   let status = req.body.title;
   const url = req.body.url;
-  const clearStatus = req.body.clear && url === prevUrl;
+  const clear = req.body.clear || false;
+  const sameUrl = url === prevUrl;
 
-  if (clearStatus) {
+  // if we get an end event, but it doesn't match the previous start event,
+  // do nothing
+  if (clear && !sameUrl) {
+    res.status(200);
+    res.send('👍');
+    return;
+  }
+
+  // if we get an end event, but it does match the previous start event,
+  // clear status text and emoji
+  if (clear && sameUrl) {
     prevUrl = '';
     slack.status({})
     .then(() => {
