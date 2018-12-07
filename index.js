@@ -24,6 +24,13 @@ app.post('/', (req, res, next) => {
   const dateFormat = 'MMM D, YYYY [at] hh:mmA';
   const start = moment(req.body.start, dateFormat);
   const end = moment(req.body.end, dateFormat);
+
+	if (!status) {
+		res.status(200);
+	  res.send('👎');
+		return;
+	}
+
   // check for DND
   if (status.includes(dndToken)) {
     slack.dnd.setSnooze({
@@ -41,7 +48,7 @@ app.post('/', (req, res, next) => {
       "status_expiration": end.unix()
     })
   });
-  res.status(200);
+	res.status(200);
   res.send('🤘');
 });
 
